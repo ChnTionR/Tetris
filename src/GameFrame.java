@@ -1,13 +1,12 @@
 import javax.swing.*;
-import java.awt.*;
 
-public class MyFrame extends JFrame {
-    GamePanel gamePanel;
+public class GameFrame extends JFrame {
+    BigGamePanel bigGamePanel;
 
-    public MyFrame(){
-        gamePanel = new GamePanel();
+    public GameFrame(){
+        bigGamePanel = new BigGamePanel();
         //set attributes
-        this.add(gamePanel);
+        this.add(bigGamePanel);
         this.pack();
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setVisible(true);

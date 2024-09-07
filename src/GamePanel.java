@@ -33,6 +33,8 @@ public class GamePanel extends JPanel implements KeyListener{
     public void paintComponent(Graphics g){
         //clear background
         super.paintComponent(g);
+        g.setColor(new Color(0,0,0));
+        g.fillRect(0,0,200,400);
 
 
         for (Map.Entry<Rectangle, Color> entry: piece.controlledPiece.entrySet()){
