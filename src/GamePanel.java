@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Map;
 
 public class GamePanel extends JPanel implements KeyListener{
     Piece piece;
@@ -34,15 +35,15 @@ public class GamePanel extends JPanel implements KeyListener{
         super.paintComponent(g);
 
 
-        for (Rectangle i: piece.controlledPiece){
-            if (i != null) {
-                piece.drawPixel(g, i);
+        for (Map.Entry<Rectangle, Color> entry: piece.controlledPiece.entrySet()){
+            if (entry != null) {
+                piece.drawPixel(g, entry);
             }
         }
 
-        for (Rectangle i: piece.boardPixel){
-            if (i != null) {
-                piece.drawPixel(g, i);
+        for (Map.Entry<Rectangle, Color> entry: piece.boardPixel.entrySet()){
+            if (entry != null) {
+                piece.drawPixel(g, entry);
             }
         }
 

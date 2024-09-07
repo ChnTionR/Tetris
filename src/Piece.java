@@ -1,5 +1,8 @@
+import javax.lang.model.type.ArrayType;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 public class Piece{
@@ -11,15 +14,16 @@ public class Piece{
 
     boolean controllable;
 
-    Rectangle pixel;
+    Map<Rectangle, Color> pixel = new HashMap<>();
     Rectangle leftBorder = new Rectangle(-20,0,20, 400);
     Rectangle rightBorder = new Rectangle(200, 0, 20,400);
     Rectangle bottomBorder = new Rectangle(0, 400, 200, 20);
 
-    ArrayList<Rectangle> boardPixel = new ArrayList<>();
-    ArrayList<Rectangle> controlledPiece = new ArrayList<>();
+    Map<Rectangle, Color> boardPixel = new HashMap<>();
+    Map<Rectangle, Color> controlledPiece = new HashMap<>();
 
     int[][][] chosenPiece = new int[4][4][2];
+    String chosenPieceStr;
     int[][] chosenSprite = new int[4][2];
     int spriteNo;
 
@@ -87,14 +91,25 @@ public class Piece{
     }
 
     public void createPixel(int x, int y){
-        pixel = new Rectangle((x+posX)*20, (y+posY)*20, 20, 20);
+        Color color = new Color(0,0,0,100);
+        pixel.clear();
+        switch (chosenPieceStr){
+            case "i" -> color = new Color(120,180,230,100);
+            case "t" -> color = new Color(120,0,210, 100);
+            case "l1" -> color = new Color(200,100,1,100);
+            case "l2" -> color = new Color(0,60,170, 100);
+            case "z1" -> color = new Color(0,175,0,100);
+            case "z2" -> color = new Color(230,0,0,100);
+            case "b" -> color = new Color(230,200,0,100);
+        }
+        pixel.put(new Rectangle((x+posX)*20, (y+posY)*20, 20, 20), color);
     }
 
     public void createPiece(int[][] sprite){
         controlledPiece.clear();
         for(int[] pixels: sprite){
             createPixel(pixels[0], pixels[1]);
-            controlledPiece.add(pixel);
+            controlledPiece.putAll(pixel);
         }
 
     }
@@ -133,16 +148,16 @@ public class Piece{
         }
     }
 
-    public void drawPixel(Graphics g, Rectangle r){
+    public void drawPixel(Graphics g, Map.Entry<Rectangle, Color> entry){
         Graphics2D g2D = (Graphics2D) g;
-        int[] topSideX = {r.x, r.x+10, r.x+20};
-        int[] topSideY = {r.y, r.y+10, r.y};
+        int[] topSideX = {entry.getKey().x, entry.getKey().x+10, entry.getKey().x+20};
+        int[] topSideY = {entry.getKey().y, entry.getKey().y+10, entry.getKey().y};
 
-        int[] sideSideX = {r.x, r.x+20, r.x+20, r.x};
-        int[] sideSideY = {r.y,r.y+20, r.y, r.y+20};
+        int[] sideSideX = {entry.getKey().x, entry.getKey().x+20, entry.getKey().x+20, entry.getKey().x};
+        int[] sideSideY = {entry.getKey().y,entry.getKey().y+20, entry.getKey().y, entry.getKey().y+20};
 
-        int[] bottomSideX = {r.x, r.x+10, r.x+20};
-        int[] bottomSideY = {r.y+20, r.y+10, r.y+20};
+        int[] bottomSideX = {entry.getKey().x, entry.getKey().x+10, entry.getKey().x+20};
+        int[] bottomSideY = {entry.getKey().y+20, entry.getKey().y+10, entry.getKey().y+20};
 
         g2D.setColor(new Color(180,180,180));
         g2D.fillPolygon(topSideX, topSideY, 3);
@@ -152,17 +167,22 @@ public class Piece{
 
         g2D.setColor(new Color(80,80,80));
         g2D.fillPolygon(bottomSideX, bottomSideY, 3);
+
+        g2D.setColor(entry.getValue());
+        g2D.fill(new Rectangle(entry.getKey().x, entry.getKey().y, 20,20));
     }
 
     public void spawnNew(){
         if (pixel != null){
-            boardPixel.addAll(controlledPiece);
+            boardPixel.putAll(controlledPiece);
         }
         for(int i = 0; i < 4; i++){
             removeLine(checkLines());
         }
 
-        choosePiece(pieces[rand.nextInt(pieces.length)]);
+        chosenPieceStr = pieces[rand.nextInt(pieces.length)];
+
+        choosePiece(chosenPieceStr);
         controllable = true;
         posX = 3;
         posY = 0;
@@ -251,8 +271,8 @@ public class Piece{
 
     public boolean detectCollision(Rectangle r){
         boolean collision = false;
-        for(Rectangle rec: controlledPiece){
-            if(rec.intersects(r)){
+        for(Map.Entry<Rectangle, Color> controlRec: controlledPiece.entrySet()){
+            if(controlRec.getKey().intersects(r)){
                 collision = true;
             }
         }
@@ -261,10 +281,10 @@ public class Piece{
 
     public boolean detectCollision(){
         boolean collision = false;
-        for (Rectangle boardPiece : boardPixel) {
-            if (boardPiece != null) {
-                for(Rectangle rec: controlledPiece){
-                    if(rec.intersects(boardPiece)){
+        for (Map.Entry<Rectangle, Color> boardRec : boardPixel.entrySet()) {
+            if (boardRec != null) {
+                for(Map.Entry<Rectangle, Color> controlRec: controlledPiece.entrySet()){
+                    if(controlRec.getKey().intersects(boardRec.getKey())){
                         collision = true;
                     }
                 }
@@ -281,8 +301,8 @@ public class Piece{
             //each possible y-levels
             for(int i = 0; i<20; i++){
                 //look at each square on the board
-                for(Rectangle rec: boardPixel){
-                    if(rec.y == (20-i)*20){
+                for(Map.Entry<Rectangle, Color> boardRec: boardPixel.entrySet()){
+                    if(boardRec.getKey().y == (20-i)*20){
                         rows[i] ++;
                     }
                 }
@@ -296,25 +316,27 @@ public class Piece{
     }
 
     public void removeLine(int lineNo){
-        int recX;
-        int recY;
+        ArrayList<Rectangle> removeKey = new ArrayList<>();
+        Map<Rectangle, Color> replaceKey = new HashMap<>();
 
-        //clear line
-        boardPixel.removeIf(rec -> (400 - rec.y) / 20 == lineNo);
+        //declare which pixel needs to be removed
+        if(lineNo != -1) {
+            for (Map.Entry<Rectangle, Color> boardRec : boardPixel.entrySet()) {
+                if (400 - (lineNo * 20) == boardRec.getKey().y) {
+                    removeKey.add(boardRec.getKey());
+                }
 
-        int boardSize = boardPixel.size();
-
-        //move pieces down
-        if (lineNo != -1){
-            for(int i = 0; i < boardSize; i++){
                 //pieces above the cleared line
-                if(boardPixel.get(i).y < (20-lineNo)*20){
-                    recX = boardPixel.get(i).x;
-                    recY = boardPixel.get(i).y;
-                    //replace pieces
-                    boardPixel.set(i, new Rectangle(recX,recY + 20,20,20));
+                if (400-(lineNo *20) > boardRec.getKey().y) {
+                    removeKey.add(boardRec.getKey());
+                    replaceKey.put(new Rectangle(boardRec.getKey().x, boardRec.getKey().y + 20, 20,20), boardRec.getValue());
                 }
             }
+            for(Rectangle rec: removeKey){
+                boardPixel.remove(rec);
+            }
+
+            boardPixel.putAll(replaceKey);
         }
     }
 }
