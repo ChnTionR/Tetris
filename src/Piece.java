@@ -1,11 +1,13 @@
-import javax.lang.model.type.ArrayType;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class Piece{
+
+    int linesCleared = 0;
+    int totalLineClears = 0;
+    int level = 0;
+
+    ScoreBoard scoreBoard;
 
     Random rand = new Random();
 
@@ -86,7 +88,8 @@ public class Piece{
     };
 
     //constructor
-    public Piece(){
+    public Piece(ScoreBoard scoreBoard){
+        this.scoreBoard = scoreBoard;
         spawnNew();
     }
 
@@ -188,9 +191,13 @@ public class Piece{
         if (pixel != null){
             boardPixel.putAll(controlledPiece);
         }
-        for(int i = 0; i < 4; i++){
-            removeLine(checkLines());
-        }
+
+        linesCleared = 0;
+        removeLine(checkLines());
+        totalLineClears += linesCleared;
+        level = totalLineClears/2;
+        scoreBoard.increaseScore(linesCleared, level);
+        scoreBoard.repaint();
 
         chosenPieceStr = pieces[rand.nextInt(pieces.length)];
 
@@ -306,8 +313,12 @@ public class Piece{
 
     }
 
-    public int checkLines(){
+    public ArrayList<Integer> checkLines(){
         int[] rows = new int[20];
+        for(int i = 0; i<20; i++){
+            rows[i] = 0;
+        }
+
         //write how many pieces are in each row
         if (boardPixel != null){
             //each possible y-levels
@@ -321,34 +332,46 @@ public class Piece{
             }
         }
         // if any rows are full
+        ArrayList<Integer> fullRows = new ArrayList<>();
         for(int i = 0; i < 20; i++){
-            if(rows[i] == 10) return i;
+            if(rows[i] == 10) {
+                fullRows.add(i);
+            }
         }
-        return -1;
+        fullRows.sort(Collections.reverseOrder());
+        return fullRows;
     }
 
-    public void removeLine(int lineNo){
+    public void removeLine(ArrayList<Integer> linesToClear){
+        linesCleared = linesToClear.size();
         ArrayList<Rectangle> removeKey = new ArrayList<>();
         Map<Rectangle, Color> replaceKey = new HashMap<>();
 
         //declare which pixel needs to be removed
-        if(lineNo != -1) {
-            for (Map.Entry<Rectangle, Color> boardRec : boardPixel.entrySet()) {
-                if (400 - (lineNo * 20) == boardRec.getKey().y) {
-                    removeKey.add(boardRec.getKey());
+        if(!linesToClear.isEmpty()) {
+            for(int yLevel: linesToClear) {
+                replaceKey.clear();
+                removeKey.clear();
+
+                for (Map.Entry<Rectangle, Color> boardRec : boardPixel.entrySet()) {
+                    Rectangle rect = boardRec.getKey();
+
+                    if (400 - (yLevel * 20) == rect.y) {
+                        removeKey.add(rect);
+                    }
+
+                    //pieces above the cleared line
+                    if (400 - (yLevel * 20) > rect.y) {
+                        removeKey.add(rect);
+                        replaceKey.put(new Rectangle(rect.x, rect.y + 20, 20, 20), boardRec.getValue());
+                    }
                 }
 
-                //pieces above the cleared line
-                if (400-(lineNo *20) > boardRec.getKey().y) {
-                    removeKey.add(boardRec.getKey());
-                    replaceKey.put(new Rectangle(boardRec.getKey().x, boardRec.getKey().y + 20, 20,20), boardRec.getValue());
+                for(Rectangle rec: removeKey){
+                    boardPixel.remove(rec);
                 }
+                boardPixel.putAll(replaceKey);
             }
-            for(Rectangle rec: removeKey){
-                boardPixel.remove(rec);
-            }
-
-            boardPixel.putAll(replaceKey);
         }
     }
 }

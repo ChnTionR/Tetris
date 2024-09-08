@@ -4,13 +4,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class BigGamePanel extends JPanel {
-    GamePanel gamePanel = new GamePanel();
-    Piece piece = new Piece();
+    GamePanel gamePanel;
+    Piece piece;
     Map<Rectangle, Color> borderPixels = new HashMap<>();
 
     GridBagConstraints gbc = new GridBagConstraints();
 
-    public BigGamePanel(){
+    public BigGamePanel(Piece piece){
+        this.piece = piece;
+        this.gamePanel = new GamePanel(piece);
         this.setPreferredSize(new Dimension(240,440));
         this.setLayout(new GridBagLayout());
         gbc.insets = new Insets(20,20,20,20);

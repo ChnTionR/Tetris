@@ -6,24 +6,27 @@ import java.util.Map;
 
 public class GamePanel extends JPanel implements KeyListener{
     Piece piece;
-     //create timer
-    Timer fallTimer = new Timer(500, _-> {
-        piece.move('y', "+");
-        if(!piece.controllable){
-            piece.spawnNew();
 
-        }
-        repaint();
-    });
+    Timer fallTimer;
+    double fallTime;
 
     //constructor
-    public GamePanel() {
-        piece = new Piece();
+    public GamePanel(Piece piece) {
+        this.piece = piece;
+
         //set panel attributes
         this.setPreferredSize(new Dimension(200, 400));
         this.addKeyListener(this);
         this.setFocusable(true);
         this.requestFocusInWindow();
+
+        fallTimer = new Timer((int) Math.pow((0.8 - ((piece.level - 1) * 0.0007)), piece.level - 1) * 1000, _-> {
+            piece.move('y', "+");
+            if(!piece.controllable){
+                piece.spawnNew();
+            }
+            repaint();
+        });
 
         //start timer
         fallTimer.start();
@@ -36,6 +39,8 @@ public class GamePanel extends JPanel implements KeyListener{
         g.setColor(new Color(0,0,0));
         g.fillRect(0,0,200,400);
 
+        updateTimer();
+        System.out.println(fallTime);
 
         for (Map.Entry<Rectangle, Color> entry: piece.controlledPiece.entrySet()){
             if (entry != null) {
@@ -73,7 +78,7 @@ public class GamePanel extends JPanel implements KeyListener{
                 piece.move('y', "+");
                 if(!piece.controllable){
                     piece.spawnNew();
-                    fallTimer.restart();
+                    updateTimer();
                 }
                 repaint();
                 break;
@@ -95,7 +100,7 @@ public class GamePanel extends JPanel implements KeyListener{
             repaint();
             if(!piece.controllable){
                 piece.spawnNew();
-                fallTimer.restart();
+                updateTimer();
             }
             repaint();
             break;
@@ -103,10 +108,15 @@ public class GamePanel extends JPanel implements KeyListener{
 
     }
 
+    public void updateTimer(){
+        fallTime = Math.pow((0.8 - ((piece.level - 1) * 0.0007)), piece.level - 1) * 1000;
+        fallTime = Math.max(fallTime, 100); // Minimum delay
+        fallTimer.setDelay((int) fallTime);
+    }
+
     //get key codes
     @Override
     public void keyReleased(KeyEvent e) {
         this.requestFocusInWindow();
-        System.out.printf("%c: %d\n", e.getKeyChar(), e.getKeyCode());
     }
 }
