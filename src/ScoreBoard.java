@@ -108,12 +108,14 @@ public class ScoreBoard extends JPanel {
             }
     };
     public ScoreBoard(){
-        this.setPreferredSize(new Dimension(200, 80));
+        this.setPreferredSize(new Dimension(175, 80));
     }
 
     @Override
     public void paintComponent(Graphics g){
         super.paintComponent(g);
+        g.setColor(Color.black);
+        g.fillRect(0,0,this.getWidth(), this.getHeight());
         drawScore(g, score);
         drawLevel(g, level);
     }
@@ -126,7 +128,7 @@ public class ScoreBoard extends JPanel {
                 int pixel = chars[character][i*3 + j];
 
                 if (pixel == 1) {
-                    g2D.setColor(Color.black);
+                    g2D.setColor(Color.white);
                     g2D.fillRect((j + posX)*5, (i + posY)*5, 5, 5);
                 }
             }
@@ -143,11 +145,11 @@ public class ScoreBoard extends JPanel {
             fullScore = fullScore.concat(scoreStr);
 
             for(int i = 0; i <8; i ++){
-                drawChar(g, Character.getNumericValue(fullScore.charAt(i)), 1+(i*4), 1);
+                drawChar(g, Character.getNumericValue(fullScore.charAt(i)), 2+(i*4), 2);
             }
         }else {
             for(int i = 0; i <8; i ++){
-                drawChar(g, 9, 1+(i*4), 1);
+                drawChar(g, 9, 1+(i*4), 2);
             }
         }
     }
@@ -155,18 +157,18 @@ public class ScoreBoard extends JPanel {
     public void drawLevel(Graphics g, int level){
         String levelStr = String.valueOf(level);
         String fullLevel = "";
-        drawChar(g, 10, 1, 8);
-        drawChar(g, 11, 5, 8);
-        drawChar(g, 12, 9, 8);
-        drawChar(g, 11, 13, 8);
-        drawChar(g, 10, 17, 8);
-        drawChar(g, 13, 21, 8);
+        drawChar(g, 10, 2, 9);
+        drawChar(g, 11, 6, 9);
+        drawChar(g, 12, 10, 9);
+        drawChar(g, 11, 14, 9);
+        drawChar(g, 10, 18, 9);
+        drawChar(g, 13, 22, 9);
         for(int i = 0; i < 2 - levelStr.length(); i++){
             fullLevel = fullLevel.concat("0");
         }
         fullLevel = fullLevel.concat(levelStr);
         for(int i = 0; i < 2; i++){
-            drawChar(g, Character.getNumericValue(fullLevel.charAt(i)), (i*4) + 25, 8);
+            drawChar(g, Character.getNumericValue(fullLevel.charAt(i)), (i*4) + 26, 9);
         }
     }
 

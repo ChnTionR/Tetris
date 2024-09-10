@@ -6,13 +6,15 @@ import java.util.Map;
 
 public class GamePanel extends JPanel implements KeyListener{
     Piece piece;
+    NextPieceBoard nextPieceBoard;
 
     Timer fallTimer;
     double fallTime;
 
     //constructor
-    public GamePanel(Piece piece) {
+    public GamePanel(Piece piece, NextPieceBoard nextPieceBoard) {
         this.piece = piece;
+        this.nextPieceBoard = nextPieceBoard;
 
         //set panel attributes
         this.setPreferredSize(new Dimension(200, 400));
@@ -25,6 +27,7 @@ public class GamePanel extends JPanel implements KeyListener{
             if(!piece.controllable){
                 piece.spawnNew();
             }
+            nextPieceBoard.repaint();
             repaint();
         });
 
@@ -79,6 +82,7 @@ public class GamePanel extends JPanel implements KeyListener{
                 if(!piece.controllable){
                     piece.spawnNew();
                     updateTimer();
+                    nextPieceBoard.repaint();
                 }
                 repaint();
                 break;
@@ -101,6 +105,7 @@ public class GamePanel extends JPanel implements KeyListener{
             if(!piece.controllable){
                 piece.spawnNew();
                 updateTimer();
+                nextPieceBoard.repaint();
             }
             repaint();
             break;

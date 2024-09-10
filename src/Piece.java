@@ -23,9 +23,11 @@ public class Piece{
 
     Map<Rectangle, Color> boardPixel = new HashMap<>();
     Map<Rectangle, Color> controlledPiece = new HashMap<>();
+    Map<Rectangle, Color> nextPiece = new HashMap<>();
 
     int[][][] chosenPiece = new int[4][4][2];
     String chosenPieceStr;
+    String nextPieceStr;
     int[][] chosenSprite = new int[4][2];
     int spriteNo;
 
@@ -90,13 +92,14 @@ public class Piece{
     //constructor
     public Piece(ScoreBoard scoreBoard){
         this.scoreBoard = scoreBoard;
+        nextPieceStr = pieces[rand.nextInt(pieces.length)];
         spawnNew();
     }
 
-    public void createPixel(int x, int y){
+    public void createPixel(int x, int y, String pieceStr){
         Color color = new Color(0,0,0,100);
         pixel.clear();
-        switch (chosenPieceStr){
+        switch (pieceStr){
             case "i" -> color = new Color(120,180,230,100);
             case "t" -> color = new Color(120,0,210, 100);
             case "l1" -> color = new Color(200,100,1,100);
@@ -111,10 +114,18 @@ public class Piece{
     public void createPiece(int[][] sprite){
         controlledPiece.clear();
         for(int[] pixels: sprite){
-            createPixel(pixels[0], pixels[1]);
+            createPixel(pixels[0], pixels[1], chosenPieceStr);
             controlledPiece.putAll(pixel);
         }
 
+    }
+
+    public void createNextPiece(int[][] sprite){
+        nextPiece.clear();
+        for(int[] pixels: sprite){
+            createPixel(pixels[0], pixels[1], nextPieceStr);
+            nextPiece.putAll(pixel);
+        }
     }
 
 
@@ -195,18 +206,21 @@ public class Piece{
         linesCleared = 0;
         removeLine(checkLines());
         totalLineClears += linesCleared;
-        level = totalLineClears/2;
+        level = totalLineClears/10;
         scoreBoard.increaseScore(linesCleared, level);
         scoreBoard.repaint();
 
-        chosenPieceStr = pieces[rand.nextInt(pieces.length)];
+        chosenPieceStr = nextPieceStr;
+        nextPieceStr = pieces[rand.nextInt(pieces.length)];
 
-        choosePiece(chosenPieceStr);
         controllable = true;
         posX = 3;
         posY = 0;
         spriteNo = 3;
         assert chosenSprite != null;
+        choosePiece(nextPieceStr);
+        createNextPiece(chosenSprite);
+        choosePiece(chosenPieceStr);
         createPiece(chosenSprite);
     }
 
