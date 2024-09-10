@@ -9,6 +9,8 @@ public class Piece{
 
     ScoreBoard scoreBoard;
 
+    ExtraFrame extraFrame;
+
     Random rand = new Random();
 
     int posX;
@@ -90,8 +92,9 @@ public class Piece{
     };
 
     //constructor
-    public Piece(ScoreBoard scoreBoard){
+    public Piece(ScoreBoard scoreBoard, ExtraFrame extraFrame){
         this.scoreBoard = scoreBoard;
+        this.extraFrame = extraFrame;
         nextPieceStr = pieces[rand.nextInt(pieces.length)];
         spawnNew();
     }
@@ -199,6 +202,7 @@ public class Piece{
     }
 
     public void spawnNew(){
+
         if (pixel != null){
             boardPixel.putAll(controlledPiece);
         }
@@ -222,6 +226,10 @@ public class Piece{
         createNextPiece(chosenSprite);
         choosePiece(chosenPieceStr);
         createPiece(chosenSprite);
+
+        if(detectCollision()){
+            extraFrame.spawnEndScreen();
+        }
     }
 
     public void move(char c, String s){

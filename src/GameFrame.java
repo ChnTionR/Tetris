@@ -8,14 +8,17 @@ public class GameFrame extends JFrame {
     Piece piece;
     RightSidePanel rightSidePanel;
     NextPieceBoard nextPieceBoard;
+    ExtraFrame extraFrame;
 
-    public GameFrame(){
+    public GameFrame(ExtraFrame extraFrame){
+        this.extraFrame = extraFrame;
+
         flowLayout = new FlowLayout();
         flowLayout.setHgap(0);
         flowLayout.setVgap(0);
 
         scoreBoard = new ScoreBoard();
-        piece = new Piece(scoreBoard);
+        piece = new Piece(scoreBoard, extraFrame);
         nextPieceBoard = new NextPieceBoard(piece);
         bigGamePanel = new BigGamePanel(piece,nextPieceBoard);
         rightSidePanel = new RightSidePanel(nextPieceBoard, scoreBoard);
@@ -32,6 +35,11 @@ public class GameFrame extends JFrame {
         this.setLocationRelativeTo(null);
         this.setVisible(true);
         this.setResizable(false);
+    }
+
+    public void stopWindow(){
+        bigGamePanel.stopGame();
+        this.dispose();
     }
 
 }

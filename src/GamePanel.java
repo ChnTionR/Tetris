@@ -43,7 +43,6 @@ public class GamePanel extends JPanel implements KeyListener{
         g.fillRect(0,0,200,400);
 
         updateTimer();
-        System.out.println(fallTime);
 
         for (Map.Entry<Rectangle, Color> entry: piece.controlledPiece.entrySet()){
             if (entry != null) {
@@ -123,5 +122,9 @@ public class GamePanel extends JPanel implements KeyListener{
     @Override
     public void keyReleased(KeyEvent e) {
         this.requestFocusInWindow();
+    }
+
+    public void clearBoard(){
+        piece.boardPixel.clear();
     }
 }

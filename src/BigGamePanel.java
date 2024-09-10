@@ -41,11 +41,6 @@ public class BigGamePanel extends JPanel {
         for(int i = 0; i<22; i++){
             borderPixels.put(new Rectangle(220, i*20, 20,20), color);
         }
-
-
-
-
-
     }
 
     @Override
@@ -53,5 +48,10 @@ public class BigGamePanel extends JPanel {
         for(Map.Entry<Rectangle, Color> entry: borderPixels.entrySet()){
             piece.drawPixel(g, entry);
         }
+    }
+
+    public void stopGame(){
+        gamePanel.fallTimer.stop();
+        gamePanel.clearBoard();
     }
 }
