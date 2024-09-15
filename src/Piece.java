@@ -83,12 +83,12 @@ public class Piece{
             {{0,1},{1,1},{1,2},{2,2}},
     };
 
-    int[][] bInitial = {{1,0},{2,0},{1,1},{2,1}};
+    int[][] bInitial = {{0,0},{1,0},{0,1},{1,1}};
     int[][][] b = {
-            {{1,0},{2,0},{1,1},{2,1}},
-            {{1,0},{2,0},{1,1},{2,1}},
-            {{1,0},{2,0},{1,1},{2,1}},
-            {{1,0},{2,0},{1,1},{2,1}},
+            {{0,0},{1,0},{0,1},{1,1}},
+            {{0,0},{1,0},{0,1},{1,1}},
+            {{0,0},{1,0},{0,1},{1,1}},
+            {{0,0},{1,0},{0,1},{1,1}},
     };
 
     //constructor
@@ -114,19 +114,35 @@ public class Piece{
         pixel.put(new Rectangle((x+posX)*20, (y+posY)*20, 20, 20), color);
     }
 
+    public void createNextPiecePixel(int x, int y, String pieceStr){
+        Color color = new Color(0,0,0,100);
+        pixel.clear();
+        switch (pieceStr){
+            case "i" -> color = new Color(120,180,230,100);
+            case "t" -> color = new Color(120,0,210, 100);
+            case "l1" -> color = new Color(200,100,1,100);
+            case "l2" -> color = new Color(0,60,170, 100);
+            case "z1" -> color = new Color(0,175,0,100);
+            case "z2" -> color = new Color(230,0,0,100);
+            case "b" -> color = new Color(230,200,0,100);
+        }
+        pixel.put(new Rectangle((x)*20, (y)*20, 20, 20), color);
+    }
+
     public void createPiece(int[][] sprite){
         controlledPiece.clear();
+        pixel.clear();
         for(int[] pixels: sprite){
             createPixel(pixels[0], pixels[1], chosenPieceStr);
             controlledPiece.putAll(pixel);
         }
-
     }
 
     public void createNextPiece(int[][] sprite){
         nextPiece.clear();
+        pixel.clear();
         for(int[] pixels: sprite){
-            createPixel(pixels[0], pixels[1], nextPieceStr);
+            createNextPiecePixel(pixels[0], pixels[1], nextPieceStr);
             nextPiece.putAll(pixel);
         }
     }
@@ -165,42 +181,6 @@ public class Piece{
         }
     }
 
-    public void drawPixel(Graphics g, Map.Entry<Rectangle, Color> entry){
-        Graphics2D g2D = (Graphics2D) g;
-        int[] topSideX = {entry.getKey().x, entry.getKey().x+4, entry.getKey().x+16, entry.getKey().x+20};
-        int[] topSideY = {entry.getKey().y, entry.getKey().y+4, entry.getKey().y+4, entry.getKey().y};
-
-        int[] leftSideX = {entry.getKey().x, entry.getKey().x+4, entry.getKey().x+4, entry.getKey().x};
-        int[] leftSideY = {entry.getKey().y,entry.getKey().y+4, entry.getKey().y+16, entry.getKey().y+20};
-
-        int[] rightSideX = {entry.getKey().x+20, entry.getKey().x+16, entry.getKey().x+16, entry.getKey().x+20};
-        int[] rightSideY = {entry.getKey().y,entry.getKey().y+4, entry.getKey().y+16, entry.getKey().y+20};
-
-        int[] bottomSideX = {entry.getKey().x, entry.getKey().x+4, entry.getKey().x+16, entry.getKey().x+20};
-        int[] bottomSideY = {entry.getKey().y+20, entry.getKey().y+16, entry.getKey().y+16, entry.getKey().y+20};
-
-        int[] middleX = {entry.getKey().x+4, entry.getKey().x+16, entry.getKey().x+16, entry.getKey().x+4};
-        int[] middleY = {entry.getKey().y+4,entry.getKey().y+4, entry.getKey().y+16, entry.getKey().y+16};
-
-        g2D.setColor(new Color(180,180,180));
-        g2D.fillPolygon(topSideX, topSideY, 4);
-
-        g2D.setColor(new Color(160,160,160));
-        g2D.fillPolygon(leftSideX, leftSideY, 4);
-
-        g2D.setColor(new Color(140,140,140));
-        g2D.fillPolygon(middleX, middleY, 4);
-
-        g2D.setColor(new Color(80,80,80));
-        g2D.fillPolygon(rightSideX, rightSideY, 4);
-
-        g2D.setColor(new Color(50,50,50));
-        g2D.fillPolygon(bottomSideX, bottomSideY, 4);
-
-        g2D.setColor(entry.getValue());
-        g2D.fill(new Rectangle(entry.getKey().x, entry.getKey().y, 20,20));
-    }
-
     public void spawnNew(){
 
         if (pixel != null){
@@ -218,7 +198,11 @@ public class Piece{
         nextPieceStr = pieces[rand.nextInt(pieces.length)];
 
         controllable = true;
-        posX = 3;
+        if(chosenPieceStr.equals("b")){
+            posX = 4;
+        }else{
+            posX = 3;
+        }
         posY = 0;
         spriteNo = 3;
         assert chosenSprite != null;
@@ -273,6 +257,7 @@ public class Piece{
     }
 
     public void rotate(String direction){
+        int[][] currentSprite = chosenSprite;
         switch (direction){
             case "right":
                 spriteNo++;
@@ -282,6 +267,7 @@ public class Piece{
                 chosenSprite = chosenPiece[spriteNo];
                 createPiece(chosenSprite);
                 if(detectCollision()|| detectCollision(leftBorder)|| detectCollision(rightBorder)|| detectCollision(bottomBorder)){
+                    chosenSprite = currentSprite;
                     spriteNo--;
                     if(spriteNo<0){
                         spriteNo = 3;
@@ -297,8 +283,9 @@ public class Piece{
                 chosenSprite = chosenPiece[spriteNo];
                 createPiece(chosenSprite);
                 if(detectCollision()|| detectCollision(leftBorder)|| detectCollision(rightBorder)|| detectCollision(bottomBorder)){
+                    chosenSprite = currentSprite;
                     spriteNo++;
-                    if(spriteNo>3){
+                    if(spriteNo > 3){
                         spriteNo = 0;
                     }
                 }
@@ -306,7 +293,6 @@ public class Piece{
                 break;
         }
 
-        chosenSprite = chosenPiece[spriteNo];
         createPiece(chosenSprite);
     }
 

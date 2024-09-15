@@ -7,6 +7,7 @@ import java.util.Map;
 public class GamePanel extends JPanel implements KeyListener{
     Piece piece;
     NextPieceBoard nextPieceBoard;
+    Draw draw;
 
     Timer fallTimer;
     double fallTime;
@@ -15,6 +16,7 @@ public class GamePanel extends JPanel implements KeyListener{
     public GamePanel(Piece piece, NextPieceBoard nextPieceBoard) {
         this.piece = piece;
         this.nextPieceBoard = nextPieceBoard;
+        draw = new Draw();
 
         //set panel attributes
         this.setPreferredSize(new Dimension(200, 400));
@@ -46,13 +48,13 @@ public class GamePanel extends JPanel implements KeyListener{
 
         for (Map.Entry<Rectangle, Color> entry: piece.controlledPiece.entrySet()){
             if (entry != null) {
-                piece.drawPixel(g, entry);
+                draw.drawPixel(g, entry);
             }
         }
 
         for (Map.Entry<Rectangle, Color> entry: piece.boardPixel.entrySet()){
             if (entry != null) {
-                piece.drawPixel(g, entry);
+                draw.drawPixel(g, entry);
             }
         }
 
@@ -65,18 +67,18 @@ public class GamePanel extends JPanel implements KeyListener{
     @Override
     public void keyPressed(KeyEvent e) {
         switch (e.getKeyCode()){
-            //"a"
-            case 65:
+            //"a", "left arrow"
+            case 65, 37:
                 piece.move('x', "-");
                 repaint();
                 break;
-            //"d"
-            case 68:
+            //"d", "right arrow"
+            case 68, 39:
                 piece.move('x', "+");
                 repaint();
                 break;
-            //"s"
-            case 83:
+            //"s", "down arrow"
+            case 83, 40:
                 piece.move('y', "+");
                 if(!piece.controllable){
                     piece.spawnNew();
@@ -85,13 +87,13 @@ public class GamePanel extends JPanel implements KeyListener{
                 }
                 repaint();
                 break;
-            //"e"
-            case 69:
+            //"e", "x"
+            case 69, 88:
                 piece.rotate("right");
                 repaint();
                 break;
-            //"q"
-            case 81:
+            //"q", "z"
+            case 81, 90:
                 piece.rotate("left");
                 repaint();
                 break;
@@ -122,6 +124,7 @@ public class GamePanel extends JPanel implements KeyListener{
     @Override
     public void keyReleased(KeyEvent e) {
         this.requestFocusInWindow();
+        System.out.println(e.getKeyCode());
     }
 
     public void clearBoard(){

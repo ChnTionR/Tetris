@@ -8,6 +8,7 @@ public class BigGamePanel extends JPanel {
     GamePanel gamePanel;
     Piece piece;
     NextPieceBoard nextPieceBoard;
+    Draw draw;
 
     Map<Rectangle, Color> borderPixels = new HashMap<>();
 
@@ -17,6 +18,7 @@ public class BigGamePanel extends JPanel {
         this.piece = piece;
         this.nextPieceBoard = nextPieceBoard;
         this.gamePanel = new GamePanel(piece, nextPieceBoard);
+        draw = new Draw();
 
         this.setPreferredSize(new Dimension(240,440));
         this.setLayout(new GridBagLayout());
@@ -35,18 +37,18 @@ public class BigGamePanel extends JPanel {
         }
         //right
         for(int i = 0; i<22; i++){
-            borderPixels.put(new Rectangle(0, i*20, 20,20), color);
+            borderPixels.put(new Rectangle(220, i*20, 20,20), color);
         }
         //left
         for(int i = 0; i<22; i++){
-            borderPixels.put(new Rectangle(220, i*20, 20,20), color);
+            borderPixels.put(new Rectangle(0, i*20, 20,20), color);
         }
     }
 
     @Override
     public void paintComponent(Graphics g){
         for(Map.Entry<Rectangle, Color> entry: borderPixels.entrySet()){
-            piece.drawPixel(g, entry);
+            draw.drawPixel(g, entry);
         }
     }
 

@@ -4,111 +4,142 @@ import java.awt.*;
 public class ScoreBoard extends JPanel {
 
     int score = 0;
+    int topScore = 0;
     int level = 0;
 
     int[][] chars ={
-            {
-                1,1,1,
-                1,0,1,
-                1,0,1,
-                1,0,1,
-                1,1,1
+            {//0 - 0
+                    1,1,1,
+                    1,0,1,
+                    1,0,1,
+                    1,0,1,
+                    1,1,1
 
             },
-            {
-                0,1,0,
-                1,1,0,
-                0,1,0,
-                0,1,0,
-                1,1,1
+            {//1 - 1
+                    0,1,0,
+                    1,1,0,
+                    0,1,0,
+                    0,1,0,
+                    1,1,1
             },
-            {
-                1,1,1,
-                0,0,1,
-                1,1,1,
-                1,0,0,
-                1,1,1
+            {//2 - 2
+                    1,1,1,
+                    0,0,1,
+                    1,1,1,
+                    1,0,0,
+                    1,1,1
             },
-            {
-                1,1,1,
-                0,0,1,
-                1,1,1,
-                0,0,1,
-                1,1,1
+            {//3 - 3
+                    1,1,1,
+                    0,0,1,
+                    1,1,1,
+                    0,0,1,
+                    1,1,1
             },
-            {
-                1,0,1,
-                1,0,1,
-                1,1,1,
-                0,0,1,
-                0,0,1
+            {//4 - 4
+                    1,0,1,
+                    1,0,1,
+                    1,1,1,
+                    0,0,1,
+                    0,0,1
             },
-            {
-                1,1,1,
-                1,0,0,
-                1,1,1,
-                0,0,1,
-                1,1,1
+            {//5 - 5
+                    1,1,1,
+                    1,0,0,
+                    1,1,1,
+                    0,0,1,
+                    1,1,1
             },
-            {
-                1,1,1,
-                1,0,0,
-                1,1,1,
-                1,0,1,
-                1,1,1
+            {//6 - 6
+                    1,1,1,
+                    1,0,0,
+                    1,1,1,
+                    1,0,1,
+                    1,1,1
             },
-            {
-                1,1,1,
-                0,0,1,
-                0,1,1,
-                0,0,1,
-                0,0,1
+            {//7 - 7
+                    1,1,1,
+                    0,0,1,
+                    0,1,1,
+                    0,0,1,
+                    0,0,1
             },
-            {
-                1,1,1,
-                1,0,1,
-                1,1,1,
-                1,0,1,
-                1,1,1
+            {//8 - 8
+                    1,1,1,
+                    1,0,1,
+                    1,1,1,
+                    1,0,1,
+                    1,1,1
             },
-            {
-                1,1,1,
-                1,0,1,
-                1,1,1,
-                0,0,1,
-                0,0,1
+            {//9 - 9
+                    1,1,1,
+                    1,0,1,
+                    1,1,1,
+                    0,0,1,
+                    0,0,1
             },
-            {
-                1,0,0,
-                1,0,0,
-                1,0,0,
-                1,0,0,
-                1,1,1
+            {//L - 10
+                    1,0,0,
+                    1,0,0,
+                    1,0,0,
+                    1,0,0,
+                    1,1,1
             },
-            {
-                1,1,1,
-                1,0,0,
-                1,1,1,
-                1,0,0,
-                1,1,1
+            {//E - 11
+                    1,1,1,
+                    1,0,0,
+                    1,1,1,
+                    1,0,0,
+                    1,1,1
             },
-            {
-                1,0,1,
-                1,0,1,
-                1,0,1,
-                1,0,1,
-                0,1,0
+            {//V - 12
+                    1,0,1,
+                    1,0,1,
+                    1,0,1,
+                    1,0,1,
+                    0,1,0
             },
-            {
-                0,0,0,
-                0,1,0,
-                0,0,0,
-                0,1,0,
-                0,0,0
+            {// : - 13
+                    0,0,0,
+                    0,1,0,
+                    0,0,0,
+                    0,1,0,
+                    0,0,0
+            },
+            {//T - 14
+                    1,1,1,
+                    0,1,0,
+                    0,1,0,
+                    0,1,0,
+                    0,1,0
+            },
+            {//P - 15
+                    1,1,1,
+                    1,0,1,
+                    1,1,1,
+                    1,0,0,
+                    1,0,0
+            },
+            {//C - 16
+                    1,1,1,
+                    1,0,0,
+                    1,0,0,
+                    1,0,0,
+                    1,1,1
+            },
+            {//R - 17
+                    1,1,1,
+                    1,0,1,
+                    1,1,0,
+                    1,0,1,
+                    1,0,1
             }
+
     };
-    public ScoreBoard(){
-        this.setPreferredSize(new Dimension(175, 80));
+
+    public ScoreBoard(int topScore){
+        this.topScore = topScore;
     }
 
     @Override
@@ -116,6 +147,7 @@ public class ScoreBoard extends JPanel {
         super.paintComponent(g);
         g.setColor(Color.black);
         g.fillRect(0,0,this.getWidth(), this.getHeight());
+        drawTopScore(g, topScore);
         drawScore(g, score);
         drawLevel(g, level);
     }
@@ -135,9 +167,15 @@ public class ScoreBoard extends JPanel {
         }
     }
 
-    public void drawScore(Graphics g, int score){
-        String scoreStr = String.valueOf(score);
+    public void drawTopScore(Graphics g, int topScore){
+        String scoreStr = String.valueOf(topScore);
         String fullScore = "";
+
+        drawChar(g, 14, 2, 2);
+        drawChar(g, 0, 6, 2);
+        drawChar(g, 15, 10, 2);
+        drawChar(g, 13, 14, 2);
+
         if(scoreStr.length() <= 8){
             for(int i = 0; i < 8 - scoreStr.length(); i++){
                 fullScore = fullScore.concat("0");
@@ -145,7 +183,34 @@ public class ScoreBoard extends JPanel {
             fullScore = fullScore.concat(scoreStr);
 
             for(int i = 0; i <8; i ++){
-                drawChar(g, Character.getNumericValue(fullScore.charAt(i)), 2+(i*4), 2);
+                drawChar(g, Character.getNumericValue(fullScore.charAt(i)), 2+(i*4), 8);
+            }
+        }else {
+            for(int i = 0; i <8; i ++){
+                drawChar(g, 9, 1+(i*4), 2);
+            }
+        }
+    }
+
+    public void drawScore(Graphics g, int score){
+        String scoreStr = String.valueOf(score);
+        String fullScore = "";
+
+        drawChar(g, 5, 2, 16);
+        drawChar(g, 16, 6, 16);
+        drawChar(g, 0, 10, 16);
+        drawChar(g, 17, 14, 16);
+        drawChar(g, 11, 18, 16);
+        drawChar(g, 13, 22, 16);
+
+        if(scoreStr.length() <= 8){
+            for(int i = 0; i < 8 - scoreStr.length(); i++){
+                fullScore = fullScore.concat("0");
+            }
+            fullScore = fullScore.concat(scoreStr);
+
+            for(int i = 0; i <8; i ++){
+                drawChar(g, Character.getNumericValue(fullScore.charAt(i)), 2+(i*4), 22);
             }
         }else {
             for(int i = 0; i <8; i ++){
@@ -157,18 +222,18 @@ public class ScoreBoard extends JPanel {
     public void drawLevel(Graphics g, int level){
         String levelStr = String.valueOf(level);
         String fullLevel = "";
-        drawChar(g, 10, 2, 9);
-        drawChar(g, 11, 6, 9);
-        drawChar(g, 12, 10, 9);
-        drawChar(g, 11, 14, 9);
-        drawChar(g, 10, 18, 9);
-        drawChar(g, 13, 22, 9);
+        drawChar(g, 10, 2, 40);
+        drawChar(g, 11, 6, 40);
+        drawChar(g, 12, 10, 40);
+        drawChar(g, 11, 14, 40);
+        drawChar(g, 10, 18, 40);
+        drawChar(g, 13, 22, 40);
         for(int i = 0; i < 2 - levelStr.length(); i++){
             fullLevel = fullLevel.concat("0");
         }
         fullLevel = fullLevel.concat(levelStr);
         for(int i = 0; i < 2; i++){
-            drawChar(g, Character.getNumericValue(fullLevel.charAt(i)), (i*4) + 26, 9);
+            drawChar(g, Character.getNumericValue(fullLevel.charAt(i)), (i*4) + 27, 40);
         }
     }
 

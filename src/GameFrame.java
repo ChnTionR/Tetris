@@ -4,23 +4,19 @@ import java.awt.*;
 public class GameFrame extends JFrame {
     BigGamePanel bigGamePanel;
     FlowLayout flowLayout;
-    ScoreBoard scoreBoard;
     Piece piece;
     RightSidePanel rightSidePanel;
     NextPieceBoard nextPieceBoard;
-    ExtraFrame extraFrame;
 
-    public GameFrame(ExtraFrame extraFrame){
-        this.extraFrame = extraFrame;
+    public GameFrame(ExtraFrame extraFrame, ScoreBoard scoreBoard){
 
         flowLayout = new FlowLayout();
         flowLayout.setHgap(0);
         flowLayout.setVgap(0);
 
-        scoreBoard = new ScoreBoard();
         piece = new Piece(scoreBoard, extraFrame);
         nextPieceBoard = new NextPieceBoard(piece);
-        bigGamePanel = new BigGamePanel(piece,nextPieceBoard);
+        bigGamePanel = new BigGamePanel(piece, nextPieceBoard);
         rightSidePanel = new RightSidePanel(nextPieceBoard, scoreBoard);
 
 
